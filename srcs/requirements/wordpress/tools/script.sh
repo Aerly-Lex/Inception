@@ -4,9 +4,7 @@
 
 cd /var/www/html
 
-rm -rf *
-
-sleep 15
+sleep 10
 
 wp core download --allow-root
 
@@ -26,7 +24,6 @@ sed -i  "s/localhost/mariadb/"    wp-config.php
 sleep 20
 
 # Wordpress Installation
-
 wp core install	--allow-root --url="$WP_URL" \
 				--title="$WP_TITLE" \
 				--admin_user="$WP_ADMIN_NAME" \
@@ -36,10 +33,8 @@ wp core install	--allow-root --url="$WP_URL" \
 
 wp user create	$WP_USER_NAME $WP_USER_EMAIL --user_pass=$WP_USER_PASSWORD --allow-root
 
-echo "test3"
-
 wp theme install astra --allow-root
 
-echo "test4"
+echo "Wordpress setup complete."
 # Start PHP-FPM
 php-fpm7.4 -F
