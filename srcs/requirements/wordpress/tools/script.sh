@@ -1,17 +1,31 @@
 #!/bin/bash
 
+#https://www.linode.com/docs/guides/how-to-install-wordpress-using-wp-cli-on-debian-10/#download-and-configure-wordpress
+
 cd /var/www/html
 
 rm -rf *
 
+sleep 15
+
 wp core download --allow-root
 
-wp config create	--allow-root --force \
-					--url="$WP_URL" \
-					--dbname="$DB_NAME" \
-					--dbuser="$DB_USER" \
-					--dbpass="$DB_PASSWORD" \
-					--dbhost="mariadb:3306"
+echo "DB_NAME: $DB_NAME, DB_USER: $DB_USER, DB_PASSWORD: $DB_PASSWORD, WP_URL: $WP_URL"
+
+chown -R www-data:www-data /var/www/html
+chmod -R 755 /var/www/html
+
+# Creating WP-Config manually
+cp wp-config-sample.php wp-config.php
+sed -i  "s/database_name_here/$DB_NAME/"   wp-config.php
+sed -i  "s/username_here/$DB_USER/"  	wp-config.php
+sed -i  "s/password_here/$DB_PASSWORD/"    wp-config.php
+sed -i  "s/localhost/mariadb/"    wp-config.php
+
+# Wait till MariaDB is ready
+sleep 30
+
+# Wordpress Installation
 
 wp core install	--allow-root --url="$WP_URL" \
 				--title="$WP_TITLE" \
@@ -19,9 +33,14 @@ wp core install	--allow-root --url="$WP_URL" \
 				--admin_password="$WP_ADMIN_PASS" \
 				--admin_email="$WP_ADMIN_EMAIL" \
 				--skip-email
+echo "test2"
 
-wp user create	--allow-root $WP_USER_NAME \
-				$WP_USER_EMAIL \
-				--user_pass="$WP_USER_PASS"
+wp user create	$WP_USER_NAME $WP_USER_EMAIL --user_pass=$WP_USER_PASSWORD --allow-root
 
-php-fpm7.3 -F
+echo "test3"
+
+wp theme install astra --allow-root
+
+echo "test4"
+# Start PHP-FPM
+php-fpm7.4 -F
