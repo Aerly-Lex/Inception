@@ -3,7 +3,15 @@
 # Starting MariaDB
 mysqld_safe & sleep 5
 
+
+TIMEOUT=45
+SECONDS=0
+
 until mysqladmin ping &>/dev/null; do
+	if [ $SECONDS -ge $TIMEOUT ]; then
+		echo "MariaDB not available after $TIMEOUT seconds. Aborting!"
+		exit 1
+	fi
 	echo "wait for Mariadb"
 	sleep 2
 done
