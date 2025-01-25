@@ -23,17 +23,16 @@ sed -i  "s/password_here/$DB_PASSWORD/"    wp-config.php
 sed -i  "s/localhost/mariadb/"    wp-config.php
 
 # Wait till MariaDB is ready
-sleep 30
+sleep 20
 
 # Wordpress Installation
 
 wp core install	--allow-root --url="$WP_URL" \
 				--title="$WP_TITLE" \
 				--admin_user="$WP_ADMIN_NAME" \
-				--admin_password="$WP_ADMIN_PASS" \
+				--admin_password="$WP_ADMIN_PASSWORD" \
 				--admin_email="$WP_ADMIN_EMAIL" \
 				--skip-email
-echo "test2"
 
 wp user create	$WP_USER_NAME $WP_USER_EMAIL --user_pass=$WP_USER_PASSWORD --allow-root
 
